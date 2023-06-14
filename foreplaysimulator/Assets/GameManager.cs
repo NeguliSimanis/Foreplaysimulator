@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,10 +12,29 @@ public class GameManager : MonoBehaviour
     public GameObject partnerSelectMenu;
     public GameObject gameScene;
     public bool isGameStarted = false;
+    private bool isGameOver = false;
 
     public Player player;
 
     public GameObject tongue;
+
+    // BUST TIMER
+    public TextMeshProUGUI bustTimerText;
+    float bustTimeRemaining = 50f;
+    float bustUpdateSpeed = 0.01f;
+    bool timeRunOut = false;
+
+    //PLEASURE
+    private float pleasure = 0;
+    private float maxPleasure = 100;
+    private float basePleasureLoseAmount = 1f;
+    float pleasureLoseDelay = 1.2f;
+    public Image pleasureBar;
+
+
+    [Header("UI PANELS")]
+    public GameObject gameLosePanel;
+    public GameObject gameWonPanel;
 
     private void Start()
     {
@@ -46,6 +66,8 @@ public class GameManager : MonoBehaviour
     {
         isGameStarted = true;
         gameScene.SetActive(true);
+        InvokeRepeating("UpdateBustTimer", 0, bustUpdateSpeed);
+        InvokeRepeating("LosePleasure", 1f, pleasureLoseDelay);
     }
 
     private void Update()
@@ -53,15 +75,100 @@ public class GameManager : MonoBehaviour
         if (!isGameStarted)
             return;
 
+        if (isGameOver)
+            return;
+
+        pleasureBar.fillAmount = pleasure / 100f;
+
+        UpdateBustText();
         if (Input.GetKey(KeyCode.A))
         {
             player.OpenMouth();
-            Debug.Log("OPEN");
         }
         else if(player.isMouthOpen)
         {
             player.OpenMouth(false);
-            Debug.Log("lose");
         }
+    }
+
+    private void UpdateBustText()
+    {
+        if (timeRunOut)
+        {
+            if (isGameOver)
+                return;
+            isGameOver = true;
+            bustTimerText.text = "00:00";
+            return;
+        }
+        int secondsInt = (int)(bustTimeRemaining % 60f);
+        int minutes = (int)(bustTimeRemaining / 60f);
+        string miliseconds = "00";
+        string seconds = secondsInt.ToString();
+        if (secondsInt < 10)
+            seconds = "0" + secondsInt.ToString();
+        int miliInt = (int)(10* (bustTimeRemaining - secondsInt));
+        if (miliInt < 10)
+        {
+            miliseconds = "0" + miliInt.ToString();
+        }
+        else
+        {
+            miliseconds = miliInt.ToString();
+        }
+        bustTimerText.text = "0" + minutes.ToString() + ":" + seconds.ToString();
+
+    }
+
+    private void UpdateBustTimer()
+    {
+        if (isGameOver)
+            return;
+        bustTimeRemaining -= bustUpdateSpeed;
+        if (bustTimeRemaining <= 0)
+        {
+            if (!timeRunOut)
+            {
+                timeRunOut = true;
+                LoseGame();
+            }
+        }
+    }
+
+    public void GainPleasure(float baseAmount)
+    {
+        pleasure += baseAmount;
+        if (pleasure >= maxPleasure)
+        {
+            WinGame();
+        }
+    }
+
+    private void LosePleasure()
+    {
+        pleasure -= basePleasureLoseAmount;
+        if (pleasure < 0)
+            pleasure = 0;
+    }
+
+    private void LoseGame()
+    {
+        gameLosePanel.SetActive(true);
+    }
+
+    public void WinGame()
+    {
+        isGameOver = true;
+        gameWonPanel.SetActive(true);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
