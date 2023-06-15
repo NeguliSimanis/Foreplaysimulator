@@ -36,7 +36,6 @@ public class CameraPan : MonoBehaviour
 
         if (mouseScreenPos.x > Screen.width *0.8 && transform.position.x < maxX)
         {
-            Debug.Log("right side");
             moveRight = true;
         }
         else
@@ -45,7 +44,6 @@ public class CameraPan : MonoBehaviour
         }
         if (mouseScreenPos.x < Screen.width * 0.2 && transform.position.x > minX)
         {
-            Debug.Log("left side");
             moveLeft = true;
         }
         else

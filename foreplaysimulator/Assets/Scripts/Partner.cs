@@ -9,8 +9,6 @@ public class Partner : MonoBehaviour
     GameManager gameManager;
     public GameObject speechObject;
     public TextMeshProUGUI speechText;
-    public Image pleasureBar;
-    float basePleasureLoseAmount = 1f;
 
     #region DESIRE MANAGEMENT
     /*
@@ -105,6 +103,7 @@ public class Partner : MonoBehaviour
     public void GainPleasure(float baseAmount)
     {
         gameManager.GainPleasure(baseAmount);
+        gameManager.audioManager.StartBGMusic();
     }
 
     private void SetPlayerBodyPart()

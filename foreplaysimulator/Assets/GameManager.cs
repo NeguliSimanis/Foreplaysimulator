@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject tongue;
 
+    public AudioManager audioManager;
+
     // BUST TIMER
     public TextMeshProUGUI bustTimerText;
     float bustTimeRemaining = 120f;
@@ -42,6 +44,7 @@ public class GameManager : MonoBehaviour
     {
         StartGame();
         tongue.SetActive(false);
+        audioManager = gameObject.GetComponent<AudioManager>();
         return;
         characterSelectMenu.SetActive(true);
         partnerSelectMenu.SetActive(false);
