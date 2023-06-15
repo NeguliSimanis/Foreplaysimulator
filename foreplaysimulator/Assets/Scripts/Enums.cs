@@ -10,6 +10,12 @@ public enum BodyPart
  Eye,
  Other
 }
+
+public enum SoundType
+{
+    Lick,
+    Kiss
+}
 /*
   * Wants to be touched by:
   *  -tongue
