@@ -12,10 +12,24 @@ public class PartnerBodyPart : MonoBehaviour
     bool isGainingPleasure = false;
     float basePleasureAmount = 1f;
 
+    GameManager gameManager;
+
+    private void Start()
+    {
+        gameManager = GameObject.FindObjectOfType<GameManager>().GetComponent<GameManager>();
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.GetComponent<PlayerBodyPart>() != null)
         {
+            // check if the right body part is touched
+            if (bodyPart != partner.curPartnerBodyPart)
+            {
+                partner.DisplayTempText();
+                return;
+            }
+            partner.InstantReturnOldText();
             listenToPlayerTouch = true;
         }
     }
@@ -35,8 +49,7 @@ public class PartnerBodyPart : MonoBehaviour
 
         if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
         {
-            Debug.Log("mouse move in nipple " + Time.time);
-
+            gameManager.AnimateHeart();
             if (!isGainingPleasure)
             {
                 isGainingPleasure = true;

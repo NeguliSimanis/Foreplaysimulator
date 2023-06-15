@@ -20,17 +20,19 @@ public class GameManager : MonoBehaviour
 
     // BUST TIMER
     public TextMeshProUGUI bustTimerText;
-    float bustTimeRemaining = 50f;
+    float bustTimeRemaining = 120f;
     float bustUpdateSpeed = 0.01f;
     bool timeRunOut = false;
 
     //PLEASURE
     private float pleasure = 0;
-    private float maxPleasure = 100;
+    private float maxPleasure = 150;
     private float basePleasureLoseAmount = 1f;
     float pleasureLoseDelay = 1.2f;
     public Image pleasureBar;
-
+    public Animator heartPumpAnimator;
+    public float heartAnimCooldown = 0.35f;
+    public float heartAnimCurrCooldown = 0.35f;
 
     [Header("UI PANELS")]
     public GameObject gameLosePanel;
@@ -77,8 +79,8 @@ public class GameManager : MonoBehaviour
 
         if (isGameOver)
             return;
-
-        pleasureBar.fillAmount = pleasure / 100f;
+        heartAnimCurrCooldown -= Time.deltaTime;
+        pleasureBar.fillAmount = pleasure / maxPleasure;
 
         UpdateBustText();
         if (Input.GetKey(KeyCode.A))
@@ -170,5 +172,14 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void AnimateHeart()
+    {
+         if (heartAnimCurrCooldown <= 0)
+        {
+            heartAnimCurrCooldown = heartAnimCooldown;
+            heartPumpAnimator.SetTrigger("Pump");
+        }
     }
 }
